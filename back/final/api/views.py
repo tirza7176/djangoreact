@@ -78,7 +78,7 @@ class AuthViewSet(ViewSet):
 
         # יוצר פרופיל למשתמש אוטומטית בעת ההרשמה
         UserProfile.objects.get_or_create(user = user)
-        return Response({'message': 'Registered successfully', 'user':serializer.data, **jwt})
+        return Response({'message': 'Registered successfully', 'user':serializer.data, **jwt},201)
 
 
 

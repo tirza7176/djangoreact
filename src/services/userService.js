@@ -4,7 +4,7 @@ const TOKEN_KEY = "token";
 refreshToken()
 
 function createUser(user) {
-    delete axios.defaults.headers.common["Authorization"]
+
     return httpService.post("/auth/register/", user)
 
 }
@@ -14,18 +14,11 @@ async function login(credentials) {
     try {
         const response = await httpService.post("/auth/login/", credentials)
 
-        const token = response.data.access;
-        console.log("Login response:", response.data);
-        setToken(token)
-        console.log(token);
+        setToken(response.data.jwt)
 
         return response
     } catch (error) {
-        if (error.response) {
-            console.error("Login failed:", error.response.status, error.response.data);
-        } else {
-            console.error("Login failed (no response):", error);
-        }
+
         throw error;
 
     }

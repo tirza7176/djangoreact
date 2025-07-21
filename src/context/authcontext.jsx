@@ -6,20 +6,27 @@ export const AuthContext = createContext();
 
 AuthContext.displayName = "Auth";
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(userService.getUser());
+  // const [user, setUser] = useState(userService.getUser());
+  const [user, setUser] = useState(null);
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      httpService.setDefaultCommonHeaders("Authorization", `Bearer ${token}`);
-    }
+    // // const token = localStorage.getItem("token");
+    // const response =
+    // if (token) {
+    //   httpService.setDefaultCommonHeaders("Authorization", `Bearer ${token}`)
+    // }
+    const loadUser = async () => {
+      try {
+        const response = userService.getUser();
+        setUser(response);
+        return response;
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    loadUser();
   }, []);
 
-  const refreshUser = () => setUser(userService.getUser());
-  const loginWithToken = (user, token) => {
-    localStorage.setItem("token", token);
-    setUser(user); // שמרי גם את המשתמש מהתגובה של הרישום
-    httpService.setDefaultCommonHeaders("Authorization", `Bearer ${token}`);
-  };
+  //
   const login = async (credentials) => {
     const response = await userService.login(credentials);
     refreshUser();
@@ -37,7 +44,6 @@ export function AuthProvider({ children }) {
         login,
         logout,
         createUser: userService.createUser,
-        loginWithToken,
       }}
     >
       {children}

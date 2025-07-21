@@ -5,10 +5,11 @@ import userService from "../services/userService";
 import { useAuth } from "../context/authcontext";
 import { useState } from "react";
 import { Navigate, useNavigate } from "react-router";
+
 function register() {
   const navigate = useNavigate();
   const [success, setSuccess] = useState(false);
-  const { createUser, user, loginWithToken } = useAuth();
+  const { createUser, user } = useAuth();
   const [isRegistered, setIsRegistered] = useState(false);
   const { getFieldProps, handleSubmit, handleReset, touched, errors, isValid } =
     useFormik({
@@ -40,22 +41,22 @@ function register() {
 
       onSubmit: async (values) => {
         try {
-          const response = await createUser({
-            ...values,
-          });
-          const { jwt, user } = response.data;
-          loginWithToken(user, jwt);
-          console.log("axios headers", axios.defaults.headers);
-          console.log(response.data);
+          const response = await createUser(values);
+          console.log(response);
 
-          setSuccess(true);
+          if (response.status == 201) {
+            navigate("/");
+          }
+          return response.data;
+          /*setSuccess(true);
           setTimeout(() => {
             navigate("/");
-          }, 2000);
+          }, 2000);*/
         } catch (err) {
-          if (err.response?.status === 400) {
-            setIsRegistered(true);
-          }
+          console.log(err);
+
+          /*  if (err.response?.status === 400) {
+           setIsRegistered(true);*/
         }
       },
     });
@@ -90,13 +91,7 @@ function register() {
 
               <Input
                 {...getFieldProps("email")}
-                error={
-                  isRegistered
-                    ? "Email already exists"
-                    : touched.email
-                    ? errors.email
-                    : ""
-                }
+                error={errors.email && touched.email}
                 type="email"
                 label="Email"
                 placeholder=""
