@@ -134,7 +134,7 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticatedOrReadOnly',
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.SessionAuthentication',
+        
         
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
@@ -144,13 +144,4 @@ SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(days=365)
 }
 
-CORS_ALLOWED_ORIGINS = [
-    "https://example.com",
-    "https://sub.example.com",
-    "http://localhost:8080",
-    "http://127.0.0.1:9000",
-    "http://localhost:3000",
-    "http://127.0.0.1:5173",
-    "http://localhost:5174",
-    "http://localhost:5173",
-]
+CORS_ALLOW_ALL_ORIGINS = True

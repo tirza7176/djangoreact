@@ -66,7 +66,7 @@ class AuthViewSet(ViewSet):
     permission_classes = [AllowAny]
 
 
-    @action(methods=['post', 'get'], detail=False)
+    @action(methods=['post'], detail=False, permission_classes=[AllowAny])
     def register(self, request):
         serializer = UserSerializer(data=request.data)
         # validation by our rules in UserSerializer and in User:
@@ -88,7 +88,7 @@ class AuthViewSet(ViewSet):
             'register': 'http://127.0.0.1:8000/api/auth/register',
         })
     
-    @action(methods=['post', 'get'], detail=False)
+    @action(methods=['post'], detail=False, permission_classes=[AllowAny])
     def login(self, request):
 
         # create the serializer object

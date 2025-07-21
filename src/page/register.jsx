@@ -82,7 +82,7 @@ function register() {
             <div className="row g-3 mb-4">
               <Input
                 {...getFieldProps("username")}
-                error={errors.username}
+                error={errors.username && touched.username}
                 type="text"
                 label="username"
                 placeholder=""
@@ -100,7 +100,7 @@ function register() {
 
               <Input
                 {...getFieldProps("password")}
-                error={errors.password}
+                error={errors.password && touched.email}
                 type="password"
                 label="Password"
                 placeholder=""
