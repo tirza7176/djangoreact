@@ -1,8 +1,8 @@
 import Input from "../component/input";
 import { useFormik } from "formik";
 import Joi from "joi";
-
-import { useAuth } from "../context/authcontext";
+/*import userService from "../services/userService";*/
+import { useAuth } from "../context/authContext";
 import { useState } from "react";
 import { Navigate, useNavigate } from "react-router";
 
@@ -36,9 +36,7 @@ function SignIn() {
       },
       onSubmit: async (values) => {
         try {
-          const response = await login(values);
-          console.log(response);
-
+          await login(values);
           navigate("/");
         } catch (err) {
           if (err.response?.status === 400) {

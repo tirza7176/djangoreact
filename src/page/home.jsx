@@ -1,6 +1,36 @@
+import { useEffect, useState } from "react";
 import Article from "../component/article";
+import blogService from "../services/blogservice";
 
 function Home() {
+  const [posts, setPosts] = useState([]);
+  const [currentPage, setCurrentPage] = useState(0);
+  const postsPerPage = 3;
+  useEffect(() => {
+    const loadPosts = async () => {
+      try {
+        const response = await blogService.getAllposts();
+        console.log(response);
+        setPosts(response);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    loadPosts();
+  }, []);
+  const totalPages = Math.ceil(posts.length / postsPerPage);
+  const currentPosts = posts.slice(
+    currentPage * postsPerPage,
+    (currentPage + 1) * postsPerPage
+  );
+  const handlePrev = () => {
+    setCurrentPage((prev) => Math.max(prev - 1, 0));
+  };
+
+  const handleNext = () => {
+    setCurrentPage((prev) => Math.min(prev + 1, totalPages - 1));
+  };
+
   return (
     <div>
       <div className="d-flex justify-content-center">
@@ -18,9 +48,25 @@ function Home() {
         </div>
       </div>
       <div className="d-flex gap-3 flex-wrap justify-content-center">
-        <Article></Article>
-        <Article></Article>
-        <Article></Article>
+        {currentPosts.map((post) => (
+          <Article key={post.id} post={post} />
+        ))}
+      </div>
+      <div className="d-flex justify-content-center my-4 gap-3">
+        <button
+          className="btn btn-outline-primary"
+          onClick={handlePrev}
+          disabled={currentPage === 0}
+        >
+          <i className="bi bi-caret-left-fill"></i>
+        </button>
+        <button
+          className="btn btn-outline-primary"
+          onClick={handleNext}
+          disabled={currentPage === totalPages - 1}
+        >
+          <i className="bi bi-caret-right-fill"></i>
+        </button>
       </div>
     </div>
   );

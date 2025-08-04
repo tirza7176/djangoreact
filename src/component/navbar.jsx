@@ -1,8 +1,8 @@
 import { Link, NavLink } from "react-router";
 import Logo from "./logo";
-/*import { useAuth } from "../context/auth.context";*/
+import { useAuth } from "../context/authContext";
 function Navbar() {
-  /* const { user } = useAuth();*/
+  const { user } = useAuth();
   return (
     <nav
       className="navbar navbar-expand-md bg-danger"
@@ -33,22 +33,26 @@ function Navbar() {
             </li>
           </ul>
           <ul className="navbar-nav ms-auto mb-2 mb-md-0">
-            <li className="nav-item">
-              <NavLink className="nav-link text-white" to="/register">
-                register
-              </NavLink>
-            </li>
-            <li className="nav-item">
-              <NavLink className="nav-link text-white" to="/sign-in">
-                Sign in
-              </NavLink>
-            </li>
-
-            <li className="nav-item">
-              <NavLink className="nav-link text-white" to="/sign-out">
-                Sign out
-              </NavLink>
-            </li>
+            {user ? (
+              <li className="nav-item">
+                <NavLink className="nav-link text-white" to="/sign-out">
+                  Sign out
+                </NavLink>
+              </li>
+            ) : (
+              <>
+                <li className="nav-item">
+                  <NavLink className="nav-link text-white" to="/register">
+                    register
+                  </NavLink>
+                </li>
+                <li className="nav-item">
+                  <NavLink className="nav-link text-white" to="/sign-in">
+                    Sign in
+                  </NavLink>
+                </li>
+              </>
+            )}
           </ul>
         </div>
       </div>

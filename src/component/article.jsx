@@ -1,6 +1,17 @@
 import { Link } from "react-router";
+import blogService from "../services/blogservice";
 
-function Article() {
+function Article({ post }) {
+  const {
+    id,
+    title,
+    text,
+    tags,
+    comments,
+    author_id,
+    created_at,
+    author_username,
+  } = post;
   return (
     <div className="card position-relative" style={{ width: "20rem" }}>
       <button
@@ -11,17 +22,25 @@ function Article() {
       </button>
       <div className="card-body">
         <div className="d-flex justify-content-between align-items-center mb-2">
-          <h5 className="card-title">post title</h5>
-          <h6 className="card-subtitle mb-2 text-body-secondary">date</h6>
-          <h6 className="card-subtitle mb-2 text-body-secondary">author</h6>
-        </div>
-        <h6 className="card-subtitle mb-2 text-body-secondary">tag</h6>
-        <p className="card-text">
-          Some quick example text to build on the card title and make up the
-          bulk of the card’s content.
-        </p>
+          <h5 className="card-title"> {title}</h5>
+          <h6 className="card-subtitle mb-2 text-body-secondary">
+            {new Date(created_at).toLocaleDateString()}/
+          </h6>
 
-        <Link className="card-link">comment</Link>
+          <h6 className="card-subtitle mb-2 text-body-secondary-bold">
+            {author_username}
+          </h6>
+        </div>
+        {tags.length > 0 && (
+          <p className="card-subtitle mb-2 text-body-secondary">
+            {tags.join(", ")}
+          </p>
+        )}
+        <p className="card-text">{text}</p>
+
+        <Link to={`/posts/${post.id}/`} className="card-link">
+          comment
+        </Link>
       </div>
     </div>
   );

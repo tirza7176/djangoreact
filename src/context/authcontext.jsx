@@ -1,32 +1,14 @@
-import { createContext, useContext } from "react";
-import { useState, useEffect } from "react";
+import { createContext, useState, useContext, useEffect } from "react";
+
 import userService from "../services/userService";
-import httpService from "../services/httpservice";
-export const AuthContext = createContext();
 
-AuthContext.displayName = "Auth";
+export const authContext = createContext();
+authContext.displayName = "Auth";
 export function AuthProvider({ children }) {
-  // const [user, setUser] = useState(userService.getUser());
-  const [user, setUser] = useState(null);
-  useEffect(() => {
-    // // const token = localStorage.getItem("token");
-    // const response =
-    // if (token) {
-    //   httpService.setDefaultCommonHeaders("Authorization", `Bearer ${token}`)
-    // }
-    const loadUser = async () => {
-      try {
-        const response = userService.getUser();
-        setUser(response);
-        return response;
-      } catch (err) {
-        console.log(err);
-      }
-    };
-    loadUser();
-  }, []);
+  const [user, setUser] = useState(userService.getUser());
 
-  //
+  console.log("User from token:", user);
+  const refreshUser = () => setUser(userService.getUser());
   const login = async (credentials) => {
     const response = await userService.login(credentials);
     refreshUser();
@@ -36,21 +18,24 @@ export function AuthProvider({ children }) {
     userService.logout();
     refreshUser();
   };
-
+  useEffect(() => {
+    userService.refreshToken();
+    refreshUser();
+  }, []);
   return (
-    <AuthContext.Provider
+    <authContext.Provider
       value={{
         user,
+        createUser: userService.createUser,
         login,
         logout,
-        createUser: userService.createUser,
+        refreshUser,
       }}
     >
       {children}
-    </AuthContext.Provider>
+    </authContext.Provider>
   );
 }
-
 export function useAuth() {
-  return useContext(AuthContext);
+  return useContext(authContext);
 }

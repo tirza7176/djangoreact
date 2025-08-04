@@ -8,6 +8,8 @@ class BlogTokenObtainPairSerializer(TokenObtainPairSerializer):
 
         # Add custom claims
         token['isadmin'] = user.is_superuser
+        token['username'] = user.username  # ⬅️ מוסיף את שם המשתמש
+        token['userprofile_id'] = user.userprofile.id 
         # ...
 
         return token

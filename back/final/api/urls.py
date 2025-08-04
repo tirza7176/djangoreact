@@ -13,7 +13,8 @@ router.register('users', UserViewSet, basename='users')
 router.register('userprofiles', UserProfileViewSet, basename='userprofiles')
 router.register('likes', PostUserLikesViewSet, basename='likes')
 
-urlpatterns = router.urls
+
+urlpatterns = router.urls 
 
 #optional: we can add more patterns here:
 urlpatterns += [

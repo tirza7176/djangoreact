@@ -50,6 +50,7 @@ class CommentSerializer(ModelSerializer):
 
     # add the author_id to the json:
     author_id = SerializerMethodField('get_author_id')
+    author_username = SerializerMethodField('get_author_username')
     class Meta:
         model = Comment
         fields = "__all__"
@@ -58,6 +59,8 @@ class CommentSerializer(ModelSerializer):
     def get_author_id(self, obj):
         return obj.author.id
         # fields = ['text', 'id']
+    def get_author_username(self, obj):
+        return obj.author.user.username if obj.author and obj.author.user else None
 
 class UserProfileSerializer(ModelSerializer):
     user = HiddenField(default=CurrentUserDefault())
@@ -74,10 +77,17 @@ class UserProfileSerializer(ModelSerializer):
 class PostSerializer(ModelSerializer):
     author = HiddenField(default = CurrentProfileDefault())
     author_id = SerializerMethodField('get_author_id')
-   
+    author_username = SerializerMethodField('get_author_username')
+    comments = CommentSerializer(many=True, read_only=True)
+    tags=  SerializerMethodField()
+
     def get_author_id(self, obj):
         return obj.author.id
-    
+     
+    def get_author_username(self, obj):
+        return obj.author.user.username if obj.author and obj.author.user else None
+    def get_tags(self, obj):
+        return [tag.name for tag in obj.tags.all()]
     class Meta:
         model = Post
         fields = "__all__"

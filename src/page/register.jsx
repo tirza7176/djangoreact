@@ -1,15 +1,16 @@
 import Input from "../component/input";
 import { useFormik } from "formik";
 import Joi from "joi";
-import userService from "../services/userService";
-import { useAuth } from "../context/authcontext";
+/*import userService from "../services/userService.js";*/
+
+import { useAuth } from "../context/authContext.jsx";
 import { useState } from "react";
 import { Navigate, useNavigate } from "react-router";
 
 function register() {
   const navigate = useNavigate();
   const [success, setSuccess] = useState(false);
-  const { createUser, user } = useAuth();
+  const { createUser, user, login, refreshUser } = useAuth();
   const [isRegistered, setIsRegistered] = useState(false);
   const { getFieldProps, handleSubmit, handleReset, touched, errors, isValid } =
     useFormik({
@@ -42,21 +43,23 @@ function register() {
       onSubmit: async (values) => {
         try {
           const response = await createUser(values);
-          console.log(response);
-
-          if (response.status == 201) {
-            navigate("/");
+          const token = response.data.jwt;
+          if (token) {
+            localStorage.setItem("token", token);
+            refreshUser();
           }
-          return response.data;
-          /*setSuccess(true);
+
+          await login({ username: values.username, password: values.password });
+          setSuccess(true);
           setTimeout(() => {
             navigate("/");
-          }, 2000);*/
+          }, 1000);
         } catch (err) {
           console.log(err);
 
-          /*  if (err.response?.status === 400) {
-           setIsRegistered(true);*/
+          if (err.response?.status === 400) {
+            setIsRegistered(true);
+          }
         }
       },
     });
@@ -71,6 +74,12 @@ function register() {
           {success && (
             <div className="alert alert-info" role="alert">
               User successfully created
+            </div>
+          )}
+
+          {isRegistered && (
+            <div className="alert alert-danger" role="alert">
+              A user with that username already exists.
             </div>
           )}
           <form
@@ -100,7 +109,7 @@ function register() {
 
               <Input
                 {...getFieldProps("password")}
-                error={errors.password && touched.email}
+                error={errors.password && touched.password}
                 type="password"
                 label="Password"
                 placeholder=""

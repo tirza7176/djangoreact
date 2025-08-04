@@ -1,67 +1,73 @@
 import httpService from "./httpservice";
 import { jwtDecode } from "jwt-decode";
-const TOKEN_KEY = "token";
+
+
 refreshToken()
+function refreshToken() {
+
+    const token = getJwt()
+    if (token) {
+        httpService.setDefaultCommonHeaders("Authorization", `Bearer ${token}`);
+        httpService.setDefaultCommonHeaders("Content-Type", "application/json")
+    }
+}
 
 function createUser(user) {
-
     return httpService.post("/auth/register/", user)
-
 }
 
-async function login(credentials) {
-    console.log("Logging in with:", credentials);
-    try {
-        const response = await httpService.post("/auth/login/", credentials)
+async function login(credentails) {
+    const response = await httpService.post("/auth/login/", credentails)
+    /* localStorage.setItem("token", response.data.jwt);*/
+    /* setToken(response.data.jwt)*/
+    console.log(response.data);
 
-        setToken(response.data.jwt)
 
-        return response
-    } catch (error) {
-
-        throw error;
-
+    const token = response.data.jwt;
+    if (token) {
+        setToken(token);
+    } else {
+        console.error("No JWT token found in login response");
     }
+    return response
 }
-function logout() {
-    setToken(null)
-}
+
 function setToken(token) {
-    localStorage.setItem(TOKEN_KEY, token);
+    localStorage.setItem("token", token)
     refreshToken()
 }
+console.log("Saved token to localStorage:", localStorage.getItem("token"))
 
-function refreshToken() {
-    const token = getJwt();
-    if (token) {
-        httpService.setDefaultCommonHeaders("Authorization", `Bearer ${token}`)
-    }
-    else {
-        httpService.setDefaultCommonHeaders("Authorization", null);
-    }
-}
+function logout() {
+
+    localStorage.removeItem("token");
+
+    refreshToken()
+};
 
 function getJwt() {
-    return localStorage.getItem(TOKEN_KEY)
+    return localStorage.getItem("token")
 }
-
 function getUser() {
     try {
         const token = getJwt();
-        return jwtDecode(token);
-    }
-    catch {
-        return null
+        return jwtDecode(token)
+    } catch {
+        return null;
     }
 }
+
 const userService = {
     createUser,
     login,
-    refreshToken,
     logout,
+    refreshToken,
     setToken,
     getJwt,
     getUser,
 }
 
-export default userService;
+export default userService
+
+
+

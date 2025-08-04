@@ -4,7 +4,7 @@ from core.auth import get_token_for_user
 from rest_framework.decorators import action
 from rest_framework.viewsets import ViewSet
 from rest_framework.authtoken.serializers import AuthTokenSerializer
-
+from rest_framework import status
 from rest_framework.permissions import AllowAny
 from rest_framework.viewsets import ModelViewSet
 from django.contrib.auth.models import User
@@ -15,7 +15,7 @@ from .serializers import (UserSerializer, PostSerializer,
 
 from .models import Tag, UserProfile, Post, Comment, PostUserLikes
 
-from rest_framework.permissions import IsAdminUser
+from rest_framework.permissions import IsAdminUser,IsAuthenticatedOrReadOnly
 
 from .permissions import (CommentOwnerOrReadOnly, PostsPermission, IsAdmin,
                           TagsPermission, UserLikesPermission, UserProfilePermission)
@@ -40,10 +40,27 @@ class PostUserLikesViewSet(ModelViewSet):
 
 
 class PostViewSet(ModelViewSet):
-    queryset = Post.objects.all()
+    queryset = Post.objects.all().order_by("-created_at")
     serializer_class = PostSerializer
     permission_classes = [PostsPermission]
 
+    @action(detail=True, methods=['get', 'post'], url_path='comments', permission_classes=[IsAuthenticatedOrReadOnly])
+    def comments(self, request, pk=None):
+        post = self.get_object()
+
+        if request.method == 'GET':
+            comments = post.comments.all()
+            serializer = CommentSerializer(comments, many=True)
+            return Response(serializer.data)
+
+        elif request.method == 'POST':
+            data = request.data.copy()
+            data['post'] = post.id
+            serializer = CommentSerializer(data=data, context={'request': request})
+            if serializer.is_valid():
+                serializer.save(author=request.user.userprofile)
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class UserProfileViewSet(ModelViewSet):
     queryset = UserProfile.objects.all()
@@ -54,9 +71,10 @@ class UserProfileViewSet(ModelViewSet):
 class CommentViewSet(ModelViewSet):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
-    permission_classes = [CommentOwnerOrReadOnly]
+    permission_classes = [IsAuthenticatedOrReadOnly,CommentOwnerOrReadOnly]
+  
 
-
+   
 # checks the username and password against the database:
 
 
