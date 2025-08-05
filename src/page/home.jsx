@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import Article from "../component/article";
 import blogService from "../services/blogservice";
-
+import { useSearch } from "../context/searchContext";
 function Home() {
   const [posts, setPosts] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
+  const { inputSearch, setInputSearch } = useSearch();
   const postsPerPage = 3;
   useEffect(() => {
     const loadPosts = async () => {
@@ -18,8 +19,14 @@ function Home() {
     };
     loadPosts();
   }, []);
-  const totalPages = Math.ceil(posts.length / postsPerPage);
-  const currentPosts = posts.slice(
+  useEffect(() => {
+    setCurrentPage(0);
+  }, [inputSearch]);
+  const filteredPosts = posts.filter((post) =>
+    post.title.toLowerCase().includes(inputSearch.toLowerCase())
+  );
+  const totalPages = Math.ceil(filteredPosts.length / postsPerPage);
+  const currentPosts = filteredPosts.slice(
     currentPage * postsPerPage,
     (currentPage + 1) * postsPerPage
   );
@@ -43,7 +50,8 @@ function Home() {
             className="form-control form-control-sm  border border-secondary p-2 border-opacity-50"
             placeholder=""
             aria-label="search"
-            /*value={inputSearch}*/
+            value={inputSearch}
+            onChange={(e) => setInputSearch(e.target.value)}
           ></input>
         </div>
       </div>

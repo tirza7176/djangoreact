@@ -65,8 +65,7 @@ class CommentSerializer(ModelSerializer):
 class UserProfileSerializer(ModelSerializer):
     user = HiddenField(default=CurrentUserDefault())
     user_id = SerializerMethodField('get_user_id')
-    # a helper method that returns the id of the user:
-
+    
     def get_user_id(self, obj):
         return obj.user.id
 

@@ -10,12 +10,15 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 
 import { BrowserRouter } from "react-router";
 import { AuthProvider } from "./context/authContext.jsx";
+import { SearchProvider } from "./context/searchContext.jsx";
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <BrowserRouter>
-      <AuthProvider>
-        <App />
-      </AuthProvider>
+      <SearchProvider>
+        <AuthProvider>
+          <App />
+        </AuthProvider>
+      </SearchProvider>
     </BrowserRouter>
   </StrictMode>
 );
