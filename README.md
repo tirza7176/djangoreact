@@ -42,6 +42,8 @@ POST /api/token/refresh/ — Refresh JWT access token
 
 GET /api/posts/ — List all blog posts (supports search query param)
 
+GET /api/posts/?search=<query> - Retrieves a list of posts filtered by the search query
+
 POST /api/posts/ — Create a new post (admin only)
 
 GET /api/posts/<id>/ — Retrieve post details by ID
