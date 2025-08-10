@@ -1,12 +1,57 @@
-# React + Vite
+name: tirza simon
+email: t0527179413@gmail.com
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+# Project Overview
 
-Currently, two official plugins are available:
+This project consists of a Django backend API combined with a React frontend client, forming a full-stack blogging application.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+The backend is built with Django REST Framework and handles user authentication (including JWT tokens), article management, comments, and permissions.
 
-## Expanding the ESLint configuration
+The frontend is built with React and provides the user interface for the application. It allows users to:
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Register and log in to the site using JWT-based authentication.
+
+View and search blog articles.
+
+Add comments to posts if they are authenticated.
+
+Edit their own comments.
+
+Admin users can create, update, and delete blog posts via the frontend.
+
+The React app communicates with the backend API to perform these actions securely, using access and refresh tokens to maintain user sessions.
+
+## Features
+
+- User registration and JWT authentication (access and refresh tokens)
+- CRUD operations on blog posts (articles)
+- Adding and retrieving comments on posts
+- User profiles management
+- Permissions ensuring only admins can create/update/delete posts
+- Search functionality on posts by title, content, and tags
+
+---
+
+## API Endpoints
+
+POST /api/auth/register/ — Register a new user
+
+POST /api/auth/login/ — Obtain JWT access and refresh tokens
+
+POST /api/token/refresh/ — Refresh JWT access token
+
+GET /api/posts/ — List all blog posts (supports search query param)
+
+POST /api/posts/ — Create a new post (admin only)
+
+GET /api/posts/<id>/ — Retrieve post details by ID
+
+PUT /api/posts/<id>/ — Update a post (admin only)
+
+DELETE /api/posts/<id>/ — Delete a post (admin only)
+
+GET /api/posts/<id>/comments/ — List comments for a post
+
+POST /api/posts/<id>/comments/ — Add a comment to a post (authenticated users)
+
+DELETE /api/comments/<id>/ — Delete a comment (admin only)
