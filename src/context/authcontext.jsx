@@ -19,8 +19,10 @@ export function AuthProvider({ children }) {
     refreshUser();
   };
   useEffect(() => {
-    userService.refreshToken();
-    refreshUser();
+    userService
+      .renewAccessToken()
+      .then(() => refreshUser())
+      .catch(() => logout());
   }, []);
   return (
     <authContext.Provider

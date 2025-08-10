@@ -12,6 +12,23 @@ function refreshToken() {
     }
 }
 
+async function renewAccessToken() {
+    const refreshTokenValue = localStorage.getItem("refreshToken");
+    if (!refreshTokenValue) return;
+
+    try {
+        const response = await httpService.post("/token/refresh/", {
+            refresh: refreshTokenValue
+        });
+        const newAccessToken = response.data.access;
+        setToken(newAccessToken);
+        console.log("Access token refreshed!");
+    } catch (error) {
+        console.error("Failed to refresh token", error);
+        logout();
+    }
+}
+
 function createUser(user) {
     return httpService.post("/auth/register/", user)
 }
@@ -23,11 +40,13 @@ async function login(credentails) {
     console.log(response.data);
 
 
-    const token = response.data.jwt;
-    if (token) {
-        setToken(token);
+    const accessToken = response.data.access;
+    const refreshTokenValue = response.data.refresh;
+    if (accessToken) {
+        setToken(accessToken);
+        localStorage.setItem("refreshToken", refreshTokenValue);
     } else {
-        console.error("No JWT token found in login response");
+        console.error("No access token found in login response");
     }
     return response
 }
@@ -41,7 +60,7 @@ console.log("Saved token to localStorage:", localStorage.getItem("token"))
 function logout() {
 
     localStorage.removeItem("token");
-
+    localStorage.removeItem("refreshToken");
     refreshToken()
 };
 
@@ -65,6 +84,7 @@ const userService = {
     setToken,
     getJwt,
     getUser,
+    renewAccessToken,
 }
 
 export default userService

@@ -55,10 +55,10 @@ class CommentSerializer(ModelSerializer):
         model = Comment
         fields = "__all__"
     
-    # a helper method that returns the id of the author:
+   
     def get_author_id(self, obj):
         return obj.author.id
-        # fields = ['text', 'id']
+       
     def get_author_username(self, obj):
         return obj.author.user.username if obj.author and obj.author.user else None
 

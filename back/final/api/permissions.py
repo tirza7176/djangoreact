@@ -7,9 +7,6 @@ class IsAdmin(permissions.BasePermission):
     def has_permission(self, request, view):
         return request.user and request.user.is_staff and request.user.is_superuser
 
-        # רק למשתמש שכתב את התגובה - מותר לערוך אותה
-# כל משתמש יכול לקרוא את כל התגובות - אבל לא לערוך אותן
-
 class CommentOwnerOrReadOnly(permissions.BasePermission):
     
     def has_object_permission(self, request, view, obj):

@@ -7,6 +7,7 @@ from rest_framework.authtoken.serializers import AuthTokenSerializer
 from rest_framework import status
 from rest_framework.permissions import AllowAny
 from rest_framework.viewsets import ModelViewSet
+from rest_framework import filters
 from django.contrib.auth.models import User
 from api.permissions import CommentOwnerOrReadOnly
 from .serializers import (UserSerializer, PostSerializer,
@@ -43,8 +44,15 @@ class PostViewSet(ModelViewSet):
     queryset = Post.objects.all().order_by("-created_at")
     serializer_class = PostSerializer
     permission_classes = [PostsPermission]
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['title', 'text', 'tags__name']
+
+
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user.userprofile)
 
     @action(detail=True, methods=['get', 'post'], url_path='comments', permission_classes=[IsAuthenticatedOrReadOnly])
+   
     def comments(self, request, pk=None):
         post = self.get_object()
 
@@ -87,15 +95,13 @@ class AuthViewSet(ViewSet):
     @action(methods=['post'], detail=False, permission_classes=[AllowAny])
     def register(self, request):
         serializer = UserSerializer(data=request.data)
-        # validation by our rules in UserSerializer and in User:
-        # example check that password has at least 8 characters
+       
         serializer.is_valid(raise_exception=True)
 
-        user = serializer.save()  # calls the create method
-        jwt = get_token_for_user(user)
-
+        user = serializer.save()  
         # יוצר פרופיל למשתמש אוטומטית בעת ההרשמה
         UserProfile.objects.get_or_create(user = user)
+        jwt = get_token_for_user(user)
         return Response({'message': 'Registered successfully', 'user':serializer.data, **jwt},201)
 
 

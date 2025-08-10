@@ -5,10 +5,7 @@ function setDefaultCommonHeaders(headerName, value) {
     axios.defaults.headers.common[headerName] = value
 
 }
-/*function clearHeader(headerName) {
-    delete axios.defaults.headers.common[headerName];
-}
-*/
+
 console.log(axios.defaults.headers.common);
 
 const httpService = {
@@ -18,7 +15,7 @@ const httpService = {
     patch: axios.patch,
     delete: axios.delete,
     setDefaultCommonHeaders,
-    /* clearHeader,*/
+
 
 };
 export default httpService; 

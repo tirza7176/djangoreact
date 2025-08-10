@@ -20,8 +20,10 @@ def get_token_for_user(user):
     token = BlogTokenObtainPairSerializer.get_token(user)
     
     return {
-        'jwt': str(token.access_token),
+        'refresh': str(token),
+        'access': str(token.access_token),
     }
+   
 
 class CurrentUserDefault:
     """
