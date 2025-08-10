@@ -14,12 +14,6 @@ function Article({ post }) {
   } = post;
   return (
     <div className="card position-relative" style={{ width: "20rem" }}>
-      <button
-        className="btn btn-link position-absolute bottom-0 end-0 m-3 p-0"
-        style={{ zIndex: 1 }}
-      >
-        <i className="bi bi-heart-fill text-danger"></i>
-      </button>
       <div className="card-body">
         <div className="d-flex justify-content-between align-items-center mb-2">
           <h5 className="card-title"> {title}</h5>
